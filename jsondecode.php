@@ -1,10 +1,10 @@
 <?php 
 
-$jsonstring = 'my.json';
+$json_string = "my.json";
 
-$jsondata = file_get_contents($jsonstring);
+$json_data = file_get_contents($json_string);
 
-$arr = json_decode($jsondata,true);
+$arr = json_decode($json_data, true);
 
 echo "<table border='1' cellpadding='10px' width='50%'>";
 foreach($arr as $item) {

@@ -50,8 +50,10 @@
                 $("#load-table").append("<tr><td>" + value.id + "</td><td>" + value.name +
                     "</td><td>" + value.gender + "</td><td>" +
                     value.country + "</td></tr>");
-            })
+            });
         }
+
+
     })
     </script>
 </body>
