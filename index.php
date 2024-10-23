@@ -151,7 +151,7 @@
                     }
                 })
             }
-        })
+        }) 
 
         $(document).on("click", ".delete-btn", function() {
             var sno = $(this).data("id")
@@ -180,18 +180,18 @@
             }
         })
 
-        $(document).on("click", ".edit-btn", function() {
-            $("#modal").show()
-            var sno = $(this).data("eid")
+        $(document).on('click' , '.edit-btn' , function(){
+            $('#modal').show()
+            let sno = $(this).data('eid')
 
             $.ajax({
-                url: "load-update-form.php",
-                type: "POST",
-                data: {
+                url:"load-update-form.php",
+                type:"POST",
+                data : {
                     id: sno
                 },
-                success: function(data) {
-                    $("#modal-form table").html(data)
+                success :function(data){
+                    $('#modal-form table').html(data)
                 }
             })
         })
@@ -200,37 +200,38 @@
             $("#modal").hide()
         })
 
-        $(document).on("click", "#edit-submit", function() {
-            var sid = $("#edit-id").val()
-            var fname = $("#edit-fname").val()
-            var lname = $("#edit-lname").val()
+        $(document).on('click' , '#edit-submit' , function(){
+            let sid = $('#edit-id').val()
+            let fname = $('#edit-fname').val()
+            let lname = $('#edit-lname').val()
 
             $.ajax({
-                url: "ajax-update-form.php",
-                type: "POST",
-                data: {
-                    first_name: fname,
-                    last_name: lname,
-                    id: sid
+                url:"ajax-update-form.php",
+                type:'POST',
+                data:{
+                    first_name:fname,
+                    last_name:lname,
+                    id:sid
                 },
-                success: function(data) {
-                    if (data == 1) {
+                success:function(data){
+                    if(data==1){
                         $("#modal").hide()
                         loadTable()
                     }
                 }
             })
         })
-        $(document).on("keyup", "#search", function() {
+
+        $(document).on('keyup' , "#search" , function(){
             var search_item = $(this).val()
 
             $.ajax({
-                url: "ajax-live-search.php",
-                type: "POST",
-                data: {
+                url:"ajax-live-search.php",
+                type:"POST",
+                data:{
                     search: search_item
                 },
-                success: function(data) {
+                success:function(data){
                     $("#table-data").html(data)
                 }
             })

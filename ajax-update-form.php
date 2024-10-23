@@ -1,4 +1,5 @@
 <?php 
+
 $sid = $_POST['id'];
 $first_name = $_POST['first_name'];
 $last_name = $_POST['last_name'];
@@ -14,5 +15,6 @@ if(mysqli_query($conn,$sql)){
 else{
     echo 0;
 }
+
 
 ?>

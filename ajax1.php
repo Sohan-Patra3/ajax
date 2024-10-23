@@ -37,13 +37,13 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
 
     <script type="text/javascript">
-    $(Document).ready(function() {
-        $("#load-button").on("click", function() {
+    $(document).ready(function(){
+        $('#load-button').on('click' , function(){
             $.ajax({
-                url: "ajaxload.php",
-                type: "POST",
-                success: function(data) {
-                    $("#data-table").html(data)
+                url :"ajaxload.php",
+                type:"POST",
+                success:function(data){
+                    $('#data-table').html(data)
                 }
             })
         })
