@@ -1,15 +1,15 @@
 <?php 
 
 header('Content-Type: application/json');
-header('Acess-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: *');
 
-$conn = mysqli_connect('localhost' , 'root' , '' , 'oomsculpture') or die('connection failed');
+$conn = mysqli_connect('localhost' , 'root' , '' , 'ajax') or die('connection failed');
 
 $data = json_decode(file_get_contents('php://input'),true);
 
 $orderId = $data['id'];
 
-$sql = "select * from banner_mst where BAM_BACD={$orderId}";
+$sql = "select * from users where sno={$orderId}";
 
 $result = mysqli_query($conn , $sql) or die('sql query failed');
 

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #modal {
+            background-color: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: none;
+        }
+
+        #modal-form {
+            background-color: #fff;
+            width: 30%;
+            top: 20%;
+            left: calc(50%-15%);
+            padding: 15px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        #modal-form h2 {
+            margin: 0 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+        }
+
+        #close-btn {
+            background-color: red;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50px;
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <td>
+                    <h1>ADD RECORDS WITH PHP API</h1>
+                    <div id="serach-bar">
+                        <label for="">Search:</label>
+                        <input type="text" id="search" autocomplete="off">
+                        <br>
+                    </div>
+                </td>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr>
+                <td id="table-form">
+                    <form id="formData">
+                        first Name : <input type="text" id="fname" name="name">
+                        last Name : <input type="text" id="lname" name="lname">
+                        <input type="button" id="save-button" value="save">
+                    </form>
+                </td>
+
+            </tr>
+            <tr>
+                <td id="table-data">
+                    <table border="1" width="100%" cellspacing="0" cellpadding="10px">
+                        <tr>
+                            <th>Id</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                        <tbody id="load-data">
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="error-message"></div>
+    <div id="success-message"></div>
+
+    <div id="modal">
+        <div id="modal-form">
+            <h2>Edit Form</h2>
+            <table cellpadding="10px" width="100%">
+                <form action="">
+                    <input type="text" name="" id="sno" hidden>
+                    <label for="">Name</label>
+                    <input type="text" name="" id="name">
+                    <label for=""> Lastname</label>
+                    <input type="text" name="" id="lastname">
+                    <button type="submit" id="update-btn">Update</button>
+                </form>
+            </table>
+            <div id='close-btn'>
+                X
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function loadTable() {
+                $.ajax({
+                    url: 'http://localhost/ajax/api-fetch-all.php',
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status == false) {
+                            $('#load-data').append("<tr><h2>" + data.message + "</h2></tr>")
+                        } else {
+                            $.each(data, (key, value) => {
+                                $('#load-data').append("<tr>" +
+                                    "<td>" + value.sno + "</td>" +
+                                    "<td>" + value.name + "</td>" +
+                                    "<td>" + value.Lastname + "</td>" +
+                                    "<td><button class='edit-btn' data-eid='" + value.sno + "'>Edit</button></td>" +
+                                    "<td><button class='delete-btn' data-id='" + value.sno + "'>Delete</button></td>" +
+                                    "</tr>");
+                            });
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error: " + status + " " + error);
+                    }
+                })
+            }
+            loadTable();
+
+            $('#save-button').on('click', function (e) {
+                e.preventDefault();
+
+                let name = $('#fname').val();
+                let Lastname = $('#lname').val();
+
+                let obj = {
+                    name: name,
+                    Lastname: Lastname
+                };
+                let myJson = JSON.stringify(obj);
+                console.log(myJson);
+
+                $.ajax({
+                    url: 'http://localhost/ajax/api-insert.php',
+                    type: 'POST',
+                    data: myJson,
+                    contentType: 'application/json',
+                    success: function (response) {
+                        $('#load-data').empty();
+                        loadTable()
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error: " + status + " " + error);
+                    }
+                });
+            });
+
+            $(document).on('click', '.edit-btn', function () {
+                $('#modal').show()
+                let uid = $(this).data('eid')
+                let obj = { id: uid }
+                let myJson = JSON.stringify(obj)
+                console.log(myJson);
+
+                $.ajax({
+                    url: 'http://localhost/ajax/api-fetch-single.php',
+                    type: 'POST',
+                    data: myJson,
+                    success: function (data) {
+                        console.log(data);
+                        $('#sno').val(data[0].sno)
+                        $('#name').val(data[0].name)
+                        $('#lastname').val(data[0].Lastname)
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("ERROR" + status + " " + error);
+                    }
+                })
+            })
+
+            $(document).on('click', '#update-btn', function (e) {
+                e.preventDefault()
+                let name = $('#name').val()
+                let sno = $('#sno').val()
+                let lastname = $('#lastname').val()
+
+                let obj = {
+                    id: sno,
+                    fname: name,
+                    lname: lastname
+                }
+                let myJson = JSON.stringify(obj)
+
+                $.ajax({
+                    url: 'http://localhost/ajax/api-update.php',
+                    type: "PUT",
+                    data: myJson,
+                    success: function (data) {
+                        if (data.status == true) {
+                            $("#modal").hide()
+                            $('#load-data').empty();
+                            loadTable()
+                        }
+                    }
+                })
+            })
+
+            $(document).on('click', '#close-btn', function () {
+                $('#modal').hide()
+            })
+
+            $(document).on('click', '.delete-btn', function () {
+                let element = this
+                let sno = $(this).data('id')
+                let obj = { id: sno }
+                let myJson = JSON.stringify(obj)
+
+                $.ajax({
+                    url: 'http://localhost/ajax/api-delete.php',
+                    type: 'DELETE',
+                    data: myJson,
+                    success: function (data) {
+                        if (data.status == true) {
+                            $(element).closest("tr").fadeOut()
+                        }
+                    }
+                })
+            })
+
+            $('#search').on('keyup', function () {
+                let search_value = $(this).val()
+                let obj = {
+                    search: search_value
+                }
+                let myJson = JSON.stringify(obj)
+
+                $.ajax({
+                    url: "http://localhost/ajax/api-search.php",
+                    type: "POST",
+                    data: myJson,
+                    success: function (data) {
+                        $('#load-data').empty();
+                        $.each(data, (key, value) => {
+                            $('#load-data').append("<tr>" +
+                                "<td>" + value.sno + "</td>" +
+                                "<td>" + value.name + "</td>" +
+                                "<td>" + value.Lastname + "</td>" +
+                                "<td><button class='edit-btn' data-eid='" + value.sno + "'>Edit</button></td>" +
+                                "<td><button class='delete-btn' data-id='" + value.sno + "'>Delete</button></td>" +
+                                "</tr>");
+                        });
+                    }
+
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>
